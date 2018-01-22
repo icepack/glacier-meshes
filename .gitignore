@@ -1,3 +1,5 @@
 
 *.txt
+*.geo
+*.msh
 __pycache__/
