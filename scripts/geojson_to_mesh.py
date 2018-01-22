@@ -1,6 +1,5 @@
 
-import sys
-from glob import glob
+import argparse
 import numpy as np
 import geojson
 
@@ -180,18 +179,26 @@ def _pslg_to_geo(geo_file, points, edges, edge_ids, loops):
                    .format(', '.join(stringify(unique_ids))))
 
 
-def main(args):
-    output_filename = args[1]
-    tolerance = float(args[2])
-    input_filenames = sum([glob(arg) for arg in args[3:]], [])
-    segments = sum([_read_geojson(open(f, 'r')) for f in input_filenames], [])
+def main(outfile, infiles, tolerance):
+    segments = sum([_read_geojson(open(f, 'r')) for f in infiles], [])
 
     points, edges, edge_ids, loops = _segments_to_pslg(segments, tolerance)
 
-    with open(output_filename, 'w') as geo_file:
+    with open(outfile, 'w') as geo_file:
         _pslg_to_geo(geo_file, points, edges, edge_ids, loops)
 
 
 if __name__ == "__main__":
-    main(sys.argv)
+    parser = argparse.ArgumentParser(
+        description="Generate a mesh outline from several GeoJSON files",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser.add_argument('--output', required=True,
+                        help="Name of output file")
+    parser.add_argument('--input', required=True, nargs='*',
+                        help="Names of input GeoJSON files")
+    parser.add_argument('--tolerance', type=float, default=10e3,
+                        help="Tolerance for snapping segments together")
+    args = parser.parse_args()
+
+    main(args.output, args.input, args.tolerance)
 
