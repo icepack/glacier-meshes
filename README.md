@@ -1,7 +1,7 @@
 
 This repository contains scripts for fetching and processing various glaciological data sets.
 These data sets are the inputs to several demo programs for the glacier flow modeling library [icepack](https://www.github.com/icepack/icepack).
-
+These demo programs assume that the environment variable `ICEPACK_DATA` is set to the path to the current directory.
 
 ### Contents
 
