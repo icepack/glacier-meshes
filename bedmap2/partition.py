@@ -1,7 +1,5 @@
-
-import math
 import geojson
-from icepack.grid import arcinfo, GridData
+from icepack.grid import arcinfo
 
 def main():
     # Read in the thickness map
@@ -21,7 +19,7 @@ def main():
         xmax, ymax = bounding_box[1]
 
         with open(region_name + "-h.txt", 'w') as region_file:
-            arcinfo.write(region_file, h.subset(xmin, ymin, xmax, ymax), -9999)
+            arcinfo.write(region_file, h.subset((xmin, ymin), (xmax, ymax)), -9999)
 
 if __name__ == "__main__":
     main()
