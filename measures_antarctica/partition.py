@@ -2,7 +2,6 @@
 import numpy as np
 import netCDF4
 import geojson
-import math
 from icepack.grid import arcinfo, GridData
 
 def main():
@@ -22,8 +21,8 @@ def main():
         # An error value of 0.0 indicates missing data
         mask = (err == 0.0)
 
-        vx = GridData(x, y, velocity['vx'][::-1,:], mask=mask)
-        vy = GridData(x, y, velocity['vy'][::-1,:], mask=mask)
+        vx = GridData((x[0], y[0]), (x[1] - x[0]), velocity['vx'][::-1,:], mask=mask)
+        vy = GridData((x[0], y[0]), (x[1] - x[0]), velocity['vy'][::-1,:], mask=mask)
 
     # Get a list of interesting regions in Antarctica
     with open("../regions/antarctica.geojson", "r") as geojson_file:
@@ -38,12 +37,11 @@ def main():
         xmax, ymax = bounding_box[1]
 
         with open(region_name + "-vx.txt", 'w') as region_vx:
-            arcinfo.write(region_vx, vx.subset(xmin, ymin, xmax, ymax), -2e9)
+            arcinfo.write(region_vx, vx.subset((xmin, ymin), (xmax, ymax)), -2e9)
 
         with open(region_name + "-vy.txt", 'w') as region_vy:
-            arcinfo.write(region_vy, vy.subset(xmin, ymin, xmax, ymax), -2e9)
+            arcinfo.write(region_vy, vy.subset((xmin, ymin), (xmax, ymax)), -2e9)
 
 
 if __name__ == "__main__":
     main()
-
