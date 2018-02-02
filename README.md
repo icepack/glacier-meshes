@@ -16,8 +16,22 @@ The original data sets often cover entire ice sheets, and the time necessary to 
 Additionally, some data sets have small missing patches that can be filled in with reasonable values using some interpolation scheme.
 
 
+### NSIDC
+
+Many of the data sources are hosted by the [National Snow and Ice Data Center](https://nsidc.org).
+NSIDC requires that you register with [NASA EarthData](https://earthdata.nasa.gov) to download many of the data sets that they host.
+If you're using Mac/Unix/Linux, you can set up a `.netrc` file with your login credentials for NASA to enable downloading files from EarthData using the command line tools cURL or wget.
+Instructions for setting up a `.netrc` file can be found [here](https://nsidc.org/support/faq/what-options-are-available-bulk-downloading-data-https-earthdata-login-enabled).
+The fetch scripts in this repository assume that you've already done this.
+
+Alternatively, the makefile for each data source will not download the raw data again if the file is already present.
+If you've already downloaded the relevant raw data, you can copy it into the corresponding folder in this repository, or create a symbolic link to where the file is located on your machine.
+Then the fetch script won't bother downloading it again.
+
+
 ### Dependencies
 
+* cURL
 * Python 3
 * numpy, scipy
 * osgeo
