@@ -1,11 +1,10 @@
 
-.PHONY: clean
+.PHONY: all clean
 
-DEMS=amery-h.txt amundsen-h.txt filchner-ronne-h.txt larsen-h.txt ross-h.txt
+REGIONS=amery amundsen filchner-ronne larsen ross
+all: $(REGIONS:=-h.txt) $(REGIONS:=-mask.txt)
 
-all: $(DEMS)
-
-%-h.txt: bedmap2_ascii
+%.txt: bedmap2_ascii
 	python3 partition.py
 
 bedmap2_ascii: bedmap2_ascii.zip

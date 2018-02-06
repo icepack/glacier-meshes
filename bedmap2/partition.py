@@ -6,6 +6,10 @@ def main():
     with open("bedmap2_ascii/bedmap2_thickness.txt", 'r') as thickness_file:
         h = arcinfo.read(thickness_file)
 
+    with open("bedmap2_ascii/"
+              "bedmap2_icemask_grounded_and_shelves.txt", 'r') as mask_file:
+        mask = arcinfo.read(mask_file)
+
     # Get a list of interesting regions in Antarctica
     with open("../regions/antarctica.geojson", 'r') as regions_file:
         regions = geojson.loads(regions_file.read())
@@ -13,13 +17,13 @@ def main():
     # Save a section of the thickness map for each region to a separate file
     for region in regions['features']:
         region_name = region['properties']['name'].lower()
-        bounding_box = region['geometry']['coordinates']
+        box = region['geometry']['coordinates']
 
-        xmin, ymin = bounding_box[0]
-        xmax, ymax = bounding_box[1]
+        with open(region_name + "-h.txt", 'w') as region_thickness:
+            arcinfo.write(region_thickness, h.subset(box[0], box[1]), -9999)
 
-        with open(region_name + "-h.txt", 'w') as region_file:
-            arcinfo.write(region_file, h.subset((xmin, ymin), (xmax, ymax)), -9999)
+        with open(region_name + "-mask.txt", 'w') as region_mask:
+            arcinfo.write(region_mask, mask.subset(box[0], box[1]), -9999)
 
 if __name__ == "__main__":
     main()
