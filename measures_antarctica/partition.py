@@ -21,8 +21,13 @@ def main():
         # An error value of 0.0 indicates missing data
         mask = (err == 0.0)
 
-        vx = GridData((x[0], y[0]), (x[1] - x[0]), velocity['vx'][::-1,:], mask=mask)
-        vy = GridData((x[0], y[0]), (x[1] - x[0]), velocity['vy'][::-1,:], mask=mask)
+        vx = GridData((x[0], y[0]), dx, velocity['vx'][::-1,:], mask=mask)
+        vy = GridData((x[0], y[0]), dx, velocity['vy'][::-1,:], mask=mask)
+
+        # The standard deviations are defined everywhere, they're just equal to
+        # something really large where there's no data.
+        sigma = GridData((x[0], y[0]), dx, err.astype('float64') + 1e6 * mask,
+                         mask=np.zeros((ny, nx), dtype=bool))
 
     # Get a list of interesting regions in Antarctica
     with open("../regions/antarctica.geojson", "r") as geojson_file:
@@ -31,16 +36,16 @@ def main():
     # Save a section of the velocity map for each region to separate files
     for region in regions['features']:
         region_name = region['properties']['name'].lower()
-        bounding_box = region['geometry']['coordinates']
-
-        xmin, ymin = bounding_box[0]
-        xmax, ymax = bounding_box[1]
+        box = region['geometry']['coordinates']
 
         with open(region_name + "-vx.txt", 'w') as region_vx:
-            arcinfo.write(region_vx, vx.subset((xmin, ymin), (xmax, ymax)), -2e9)
+            arcinfo.write(region_vx, vx.subset(box[0], box[1]), -2e9)
 
         with open(region_name + "-vy.txt", 'w') as region_vy:
-            arcinfo.write(region_vy, vy.subset((xmin, ymin), (xmax, ymax)), -2e9)
+            arcinfo.write(region_vy, vy.subset(box[0], box[1]), -2e9)
+
+        with open(region_name + "-err.txt", 'w') as region_err:
+            arcinfo.write(region_err, sigma.subset(box[0], box[1]), -2e9)
 
 
 if __name__ == "__main__":
