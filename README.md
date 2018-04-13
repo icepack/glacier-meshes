@@ -36,6 +36,7 @@ Then the fetch script won't bother downloading it again.
 * numpy, scipy
 * osgeo
 * GDAL
+* rasterio
 * netCDF
 * geojson
 * zlib
