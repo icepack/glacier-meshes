@@ -1,0 +1,37 @@
+{
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:EPSG::3413"
+    }
+  },
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "geometry": {
+        "coordinates": [ [-256000.0, -2349000.0], [ 12000.0, -2230000.0 ] ],
+        "type": "LineString"
+      },
+      "properties": {"name": "Jakobshavn"},
+      "type": "Feature"
+    },
+
+    {
+      "geometry": {
+        "coordinates": [ [259000.0, -2600000.0], [346000.0, -2533000.0] ],
+        "type": "LineString"
+      },
+      "properties": {"name": "Helheim"},
+      "type": "Feature"
+    },
+
+    {
+      "geometry": {
+        "coordinates": [ [438000.0, -2328000.0], [542000.0, -2246000.0] ],
+        "type": "LineString"
+      },
+      "properties": {"name": "Kangerdlugssuaq"},
+      "type": "Feature"
+    }
+  ]
+}
