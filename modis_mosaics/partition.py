@@ -1,14 +1,14 @@
 
+import sys
 import geojson
 import rasterio
 
-def main():
-    with open("../regions/antarctica.geojson", 'r') as geojson_file:
+def main(regions_file, big_image):
+    with open(regions_file, 'r') as geojson_file:
         regions = geojson.loads(geojson_file.read())
 
-    filename = "moa125_2009_hp1_v1.1.tif"
     with rasterio.drivers():
-        with rasterio.open(filename, 'r') as source:
+        with rasterio.open(big_image, 'r') as source:
             for region in regions['features']:
                 name = region['properties']['name'].lower()
                 box = region['geometry']['coordinates']
@@ -27,4 +27,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv[1], sys.argv[2])
