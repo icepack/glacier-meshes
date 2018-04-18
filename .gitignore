@@ -1,4 +1,6 @@
 
+*.urs_cookies
+*.nc
 *.tif
 *.csv
 *.xml
