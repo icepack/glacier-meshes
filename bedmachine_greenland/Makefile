@@ -11,7 +11,7 @@ DEM=BedMachineGreenland-2017-09-20.nc
 $(DEM):
 	../scripts/fetch_nasa.sh $(URL)/$(DEM) $(DEM)
 
-$(DEMS):
+$(DEMS): $(DEM)
 	python3 partition.py
 
 clean:
