@@ -16,18 +16,17 @@ def main():
 
         # The data in the NetCDF file are stored upside-down in the `y`-
         # direction making everything very confusing.
-        err = velocity['err'][::-1,:]
+        err = np.flipud(velocity['err'])
 
         # An error value of 0.0 indicates missing data
-        mask = (err == 0.0)
+        mask = (err == 0)
 
-        vx = GridData((x[0], y[0]), dx, velocity['vx'][::-1,:], mask=mask)
-        vy = GridData((x[0], y[0]), dx, velocity['vy'][::-1,:], mask=mask)
+        vx = GridData((x[0], y[0]), dx, np.flipud(velocity['vx']), mask=mask)
+        vy = GridData((x[0], y[0]), dx, np.flipud(velocity['vy']), mask=mask)
 
         # The standard deviations are defined everywhere, they're just equal to
         # something really large where there's no data.
-        sigma = GridData((x[0], y[0]), dx, err.astype('float64') + 1e6 * mask,
-                         mask=np.zeros((ny, nx), dtype=bool))
+        sigma = GridData((x[0], y[0]), dx, err, mask=mask)
 
     # Get a list of interesting regions in Antarctica
     with open("../regions/antarctica.geojson", "r") as geojson_file:
