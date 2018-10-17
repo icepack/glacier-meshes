@@ -5,16 +5,16 @@ VELOCITIES= amery-vx.txt amundsen-vx.txt filchner-ronne-vx.txt larsen-vx.txt ros
 
 all: $(VELOCITIES)
 
-%.txt: antarctica_ice_velocity_900m.nc
+%.txt: antarctica_ice_velocity_450m_v2.nc
 	python3 partition.py
 
-URL=https://daacdata.apps.nsidc.org/pub/requests/nsidc_0484_v1
+URL=https://n5eil01u.ecs.nsidc.org/MEASURES/NSIDC-0484.002/1996.01.01
 
-antarctica_ice_velocity_900m.nc:
+antarctica_ice_velocity_450m_v2.nc:
 	../scripts/fetch_nasa.sh \
-	  $(URL)/antarctica_ice_velocity_900m.nc antarctica_ice_velocity_900m.nc
+	  $(URL)/antarctica_ice_velocity_450m_v2.nc antarctica_ice_velocity_450m_v2.nc
 
 clean:
-	rm -f antarctica_ice_velocity_900m.nc
+	rm -f antarctica_ice_velocity_450m_v2.nc
 	rm -f .urs_cookies
 

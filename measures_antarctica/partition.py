@@ -1,51 +1,32 @@
-
+import os.path
 import numpy as np
 import netCDF4
 import geojson
 from icepack.grid import arcinfo, GridData
 
 def main():
-    # Read the velocity maps into two `GridData` objects
-    with netCDF4.Dataset("antarctica_ice_velocity_900m.nc", 'r') as velocity:
-        nx, ny = velocity.nx, velocity.ny
-        xmin, ymax = float(velocity.xmin[:-1]), float(velocity.ymax[:-1])
-        dx = float(velocity.spacing[:-1])
-
-        x = np.linspace(xmin, xmin + nx * dx, nx, False)
-        y = np.linspace(ymax - ny * dx, ymax, ny, False)
-
-        # The data in the NetCDF file are stored upside-down in the `y`-
-        # direction making everything very confusing.
-        err = np.flipud(velocity['err'])
-
-        # An error value of 0.0 indicates missing data
-        mask = (err == 0)
-
-        vx = GridData((x[0], y[0]), dx, np.flipud(velocity['vx']), mask=mask)
-        vy = GridData((x[0], y[0]), dx, np.flipud(velocity['vy']), mask=mask)
-
-        # The standard deviations are defined everywhere, they're just equal to
-        # something really large where there's no data.
-        sigma = GridData((x[0], y[0]), dx, err, mask=mask)
-
     # Get a list of interesting regions in Antarctica
     with open("../regions/antarctica.geojson", "r") as geojson_file:
         regions = geojson.loads(geojson_file.read())
 
-    # Save a section of the velocity map for each region to separate files
-    for region in regions['features']:
-        region_name = region['properties']['name'].lower()
-        box = region['geometry']['coordinates']
+    # Read the velocity maps into two `GridData` objects
+    with netCDF4.Dataset("antarctica_ice_velocity_450m_v2.nc", 'r') as velocity:
+        x = velocity.variables['x'][:]
+        y = np.flipud(velocity.variables['y'][:])
+        nx, ny = len(x), len(y)
+        dx = x[1] - x[0]
 
-        with open(region_name + "-vx.txt", 'w') as region_vx:
-            arcinfo.write(region_vx, vx.subset(box[0], box[1]), -2e9)
+        for field_name in ['VX', 'VY', 'ERRX', 'ERRY', 'STDX', 'STDY', 'CNT']:
+            field = GridData((x[0], y[0]), dx, np.flipud(velocity[field_name]))
 
-        with open(region_name + "-vy.txt", 'w') as region_vy:
-            arcinfo.write(region_vy, vy.subset(box[0], box[1]), -2e9)
+            for region in regions['features']:
+                region_name = region['properties']['name'].lower()
+                filename = region_name + "-" + field_name.lower() + ".txt"
 
-        with open(region_name + "-err.txt", 'w') as region_err:
-            arcinfo.write(region_err, sigma.subset(box[0], box[1]), -2e9)
-
+                if not os.path.exists(filename):
+                    with open(filename, 'w') as output_file:
+                        box = region['geometry']['coordinates']
+                        arcinfo.write(output_file, field.subset(*box), -2e9)
 
 if __name__ == "__main__":
     main()
