@@ -8,7 +8,7 @@ all: $(VELOCITIES)
 %.txt: antarctica_ice_velocity_900m.nc
 	python3 partition.py
 
-URL=https://n5eil01u.ecs.nsidc.org/MEASURES/NSIDC-0484.001/1996.01.01
+URL=https://daacdata.apps.nsidc.org/pub/requests/nsidc_0484_v1
 
 antarctica_ice_velocity_900m.nc:
 	../scripts/fetch_nasa.sh \
