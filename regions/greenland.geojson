@@ -32,6 +32,15 @@
       },
       "properties": {"name": "Kangerdlugssuaq"},
       "type": "Feature"
+    },
+
+    {
+      "geometry": {
+        "coordinates": [ [-292e3, -1150e3], [-120e3, -916e3] ],
+        "type": "LineString"
+      },
+      "properties": {"name": "Petermann"},
+      "type": "Feature"
     }
   ]
 }
