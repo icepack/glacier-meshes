@@ -36,7 +36,7 @@
 
     {
       "geometry": {
-        "coordinates": [ [-292e3, -1150e3], [-120e3, -916e3] ],
+        "coordinates": [ [-292e3, -1160e3], [-60e3, -916e3] ],
         "type": "LineString"
       },
       "properties": {"name": "Petermann"},
