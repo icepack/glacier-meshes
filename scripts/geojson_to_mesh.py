@@ -1,5 +1,5 @@
-
 import argparse
+from itertools import chain, combinations
 import numpy as np
 import geojson
 
@@ -57,22 +57,33 @@ def _compute_segment_adjacency(segments, tolerance):
     return A
 
 
+def powerset(iterable):
+    s = list(iterable)
+    return chain.from_iterable(combinations(s, r) for r in range(len(s) + 1))
+
+
 def _orient_segments(segments, tolerance):
     """Reverse some segments as need be for orientability."""
     A = _compute_segment_adjacency(segments, tolerance)
 
-    if np.count_nonzero(A + A.T) > 0:
-        n = len(segments)
-        for i in range(n):
-            B = np.copy(A)
+    if np.count_nonzero(A + A.T) == 0:
+        return
+
+    sets = powerset(list(range(len(segments))))
+    for s in sets:
+        B = np.copy(A)
+        for i in s:
             B[i,:] *= -1
 
-            if np.count_nonzero(B + B.T) < np.count_nonzero(A + A.T):
+        if np.count_nonzero(B + B.T) == 0:
+            for i in s:
                 segments[i] = segments[i][::-1,:]
 
-        A = _compute_segment_adjacency(segments, tolerance)
-        if np.count_nonzero(A + A.T) > 0:
-            raise ValueError("This cannot be.")
+            A = _compute_segment_adjacency(segments, tolerance)
+            if np.count_nonzero(A + A.T) > 0:
+                raise ValueError("This cannot be.")
+
+            return
 
 
 def _segments_to_loops(segments, adjacency):
