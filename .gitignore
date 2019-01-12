@@ -1,10 +1,25 @@
 
+# Cookies for getting data over HTTPS
 *.urs_cookies
+
+# Raster data formats
 *.nc
 *.tif
 *.csv
 *.xml
 *.txt
+
+# Vector data formats
+*.cpg
+*.dbf
+*.qpj
+*.shp
+*.shx
+*.prj
+
+# Mesh file formats
 *.geo
 *.msh
+
+# Python detritus
 __pycache__/
