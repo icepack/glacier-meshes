@@ -7,10 +7,22 @@ def dist(x, y):
     return np.sqrt(sum((x - y)**2))
 
 
+def _extract_feature(feature):
+    if feature['geometry']['type'] == 'MultiLineString':
+        return [np.array(line) for line in feature['geometry']['coordinates']]
+    elif feature['geometry']['type'] == 'LineString':
+        return [np.array(feature['geometry']['coordinates'])]
+    raise ValueError()
+
+
 def _read_geojson(geojson_file):
     dataset = geojson.loads(geojson_file.read())
-    return [np.array(feature['geometry']['coordinates'])
-            for feature in dataset['features']]
+
+    lines = []
+    for feature in dataset['features']:
+        lines.extend(_extract_feature(feature))
+
+    return lines
 
 
 def _find_adjacent_segment(segments, i, tolerance, endpoint='tail'):
