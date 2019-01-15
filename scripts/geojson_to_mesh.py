@@ -156,8 +156,8 @@ def _segments_to_pslg(_segments, tolerance):
     return points, edges, edge_ids, loops
 
 
-def _pslg_to_geo(geo_file, points, edges, edge_ids, loops):
-    geo_file.write("cl = 1e12;\n\n")
+def _pslg_to_geo(geo_file, points, edges, edge_ids, loops, resolution=1e12):
+    geo_file.write("cl = {};\n\n".format(resolution))
 
     # Write out all the points, lines, line loops, and surfaces
     num_points = len(points)
@@ -202,13 +202,13 @@ def _pslg_to_geo(geo_file, points, edges, edge_ids, loops):
                    .format(', '.join(stringify(unique_ids))))
 
 
-def main(outfile, infiles, tolerance):
+def main(outfile, infiles, tolerance, resolution):
     segments = sum([_read_geojson(open(f, 'r')) for f in infiles], [])
 
     points, edges, edge_ids, loops = _segments_to_pslg(segments, tolerance)
 
     with open(outfile, 'w') as geo_file:
-        _pslg_to_geo(geo_file, points, edges, edge_ids, loops)
+        _pslg_to_geo(geo_file, points, edges, edge_ids, loops, resolution)
 
 
 if __name__ == "__main__":
@@ -221,7 +221,9 @@ if __name__ == "__main__":
                         help="Names of input GeoJSON files")
     parser.add_argument('--tolerance', type=float, default=10e3,
                         help="Tolerance for snapping segments together")
+    parser.add_argument('--resolution', type=float, default=1e12,
+                        help="Mesh resolution")
     args = parser.parse_args()
 
-    main(args.output, args.input, args.tolerance)
+    main(args.output, args.input, args.tolerance, args.resolution)
 
