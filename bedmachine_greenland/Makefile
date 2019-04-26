@@ -1,7 +1,7 @@
 
 .PHONY: clean
 
-DEMS=jakobshavn-bed.txt jakobshavn-surface.txt kangerdlugssuaq-bed.txt kangerdlugssuaq-surface.txt helheim-bed.txt helheim-surface.txt
+DEMS=jakobshavn-bed.tif jakobshavn-surface.tif kangerdlugssuaq-bed.tif kangerdlugssuaq-surface.tif helheim-bed.tif helheim-surface.tif
 
 all: $(DEMS)
 

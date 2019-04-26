@@ -1,7 +1,7 @@
 
 .PHONY: clean
 
-VELOCITIES=kangerdlugssuaq-vx.txt kangerdlugssuaq-vy.txt helheim-vx.txt helheim-vy.txt jakobshavn-vx.txt jakobshavn-vy.txt
+VELOCITIES=kangerdlugssuaq-vx.tif kangerdlugssuaq-vy.tif helheim-vx.tif helheim-vy.tif jakobshavn-vx.tif jakobshavn-vy.tif
 
 all: $(VELOCITIES)
 URL=https://daacdata.apps.nsidc.org/pub/DATASETS/nsidc0725_MEASURES_annual_vel_mosaics_v01/2015/

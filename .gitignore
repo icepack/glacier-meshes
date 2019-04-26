@@ -1,10 +1,24 @@
 
+# cookies from downloading things
 *.urs_cookies
+
+# NetCDF files
 *.nc
+
+# geotif files
 *.tif
+
+# mesh outlines and interiors
+*.geo
+*.msh
+
+# compressed files
+*.zip
+*.gz
+
+# cached python bytecode
+__pycache__/
+
 *.csv
 *.xml
 *.txt
-*.geo
-*.msh
-__pycache__/

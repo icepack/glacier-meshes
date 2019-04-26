@@ -1,6 +1,5 @@
-
 import geojson
-from icepack.grid import arcinfo, geotiff
+from icepack.grid import geotiff
 
 def main():
     vx = geotiff.read("greenland_vel_mosaic200_2015_vx_v01.tif")
@@ -8,17 +7,18 @@ def main():
     ex = geotiff.read("greenland_vel_mosaic200_2015_ex_v01.tif")
     ey = geotiff.read("greenland_vel_mosaic200_2015_ey_v01.tif")
 
-    with open("../../regions/greenland.geojson", 'r') as geojson_file:
+    with open('../../regions/greenland.geojson', 'r') as geojson_file:
         regions = geojson.loads(geojson_file.read())
 
+    crs = 'epsg:3413'
     for region in regions['features']:
-        region_name = region['properties']['name'].lower()
+        name = region['properties']['name'].lower()
         box = region['geometry']['coordinates']
 
-        arcinfo.write(region_name + "-vx.txt", vx.subset(box[0], box[1]), -2e9)
-        arcinfo.write(region_name + "-vy.txt", vy.subset(box[0], box[1]), -2e9)
-        arcinfo.write(region_name + "-ex.txt", ex.subset(box[0], box[1]), -2e9)
-        arcinfo.write(region_name + "-ey.txt", ey.subset(box[0], box[1]), -2e9)
+        geotiff.write(name + '-vx.tif', vx.subset(*box), missing=-2e9, crs=crs)
+        geotiff.write(name + '-vy.tif', vy.subset(*box), missing=-2e9, crs=crs)
+        geotiff.write(name + '-ex.txt', ex.subset(box[0], box[1]), -2e9)
+        geotiff.write(name + '-ey.txt', ey.subset(box[0], box[1]), -2e9)
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()

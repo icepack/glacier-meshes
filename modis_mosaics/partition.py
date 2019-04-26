@@ -1,4 +1,3 @@
-
 import sys
 import geojson
 import rasterio
@@ -21,7 +20,7 @@ def main(regions_file, big_image):
             profile['height'] = image.shape[1]
             profile['width'] = image.shape[2]
 
-            with rasterio.open(name + ".tif", 'w', **profile) as dest:
+            with rasterio.open(name + '.tif', 'w', **profile) as dest:
                 dest.write(image)
 
 

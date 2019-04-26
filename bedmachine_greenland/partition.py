@@ -1,8 +1,7 @@
-
 import numpy as np
 import netCDF4
 import geojson
-from icepack.grid import arcinfo, GridData
+from icepack.grid import geotiff, GridData
 
 def main():
     with netCDF4.Dataset("BedMachineGreenland-2017-09-20.nc", 'r') as dem:
@@ -22,14 +21,13 @@ def main():
         regions = geojson.loads(geojson_file.read())
 
     for region in regions['features']:
-        region_name = region['properties']['name'].lower()
+        name = region['properties']['name'].lower()
         box = region['geometry']['coordinates']
 
-        with open(region_name + "-bed.txt", 'w') as region_bed:
-            arcinfo.write(region_bed, bed.subset(box[0], box[1]), -2e9)
-
-        with open(region_name + "-surface.txt", 'w') as region_surface:
-            arcinfo.write(region_surface, surface.subset(box[0], box[1]), -2e9)
+        geotiff.write(name + '-bed.tif', bed.subset(box[0], box[1]),
+                      missing=-2e9, crs='epsg:3413')
+        geotiff.write(name + '-surface.tif', surface.subset(box[0], box[1]),
+                      missing=-2e9, crs='epsg:3413')
 
 if __name__ == "__main__":
     main()
