@@ -17,8 +17,8 @@ def main():
 
         geotiff.write(name + '-vx.tif', vx.subset(*box), missing=-2e9, crs=crs)
         geotiff.write(name + '-vy.tif', vy.subset(*box), missing=-2e9, crs=crs)
-        geotiff.write(name + '-ex.txt', ex.subset(box[0], box[1]), -2e9)
-        geotiff.write(name + '-ey.txt', ey.subset(box[0], box[1]), -2e9)
+        geotiff.write(name + '-ex.tif', ex.subset(*box), missing=-2e9, crs=crs)
+        geotiff.write(name + '-ey.tif', ey.subset(*box), missing=-2e9, crs=crs)
 
 if __name__ == '__main__':
     main()

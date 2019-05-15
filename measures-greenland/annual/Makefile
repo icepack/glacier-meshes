@@ -15,5 +15,5 @@ $(VELOCITIES): $(FILES)
 	python3 partition.py
 
 clean:
-	rm -rf $(FILES)
+	rm -rf $(VELOCITIES)
 	rm -rf .urs_cookies
