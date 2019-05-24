@@ -1,24 +1,28 @@
 import geojson
-from icepack.grid import geotiff
+import rasterio
 
 def main():
-    vx = geotiff.read("greenland_vel_mosaic200_2015_vx_v01.tif")
-    vy = geotiff.read("greenland_vel_mosaic200_2015_vy_v01.tif")
-    ex = geotiff.read("greenland_vel_mosaic200_2015_ex_v01.tif")
-    ey = geotiff.read("greenland_vel_mosaic200_2015_ey_v01.tif")
-
     with open('../../regions/greenland.geojson', 'r') as geojson_file:
         regions = geojson.loads(geojson_file.read())
 
-    crs = 'epsg:3413'
-    for region in regions['features']:
-        name = region['properties']['name'].lower()
-        box = region['geometry']['coordinates']
+    for field_name in ['vx', 'vy', 'ex', 'ey']:
+        filename = 'greenland_vel_mosaic200_2015_' + field_name + '_v01.tif'
+        field = rasterio.open(filename, 'r')
 
-        geotiff.write(name + '-vx.tif', vx.subset(*box), missing=-2e9, crs=crs)
-        geotiff.write(name + '-vy.tif', vy.subset(*box), missing=-2e9, crs=crs)
-        geotiff.write(name + '-ex.tif', ex.subset(*box), missing=-2e9, crs=crs)
-        geotiff.write(name + '-ey.tif', ey.subset(*box), missing=-2e9, crs=crs)
+        for region in regions['features']:
+            region_name = region['properties']['name'].lower()
+            output_filename = region_name + '-' + field_name + '.tif'
+            box = region['geometry']['coordinates']
+
+            window = rasterio.windows.from_bounds(
+                *box[0], *box[1], field.transform, field.height, field.width)
+            data = field.read(indexes=1, window=window, masked=True)
+            transform = rasterio.windows.transform(window, field.transform)
+            profile = field.profile.copy()
+            profile.update(height=window.height, width=window.width,
+                           transform=transform, nodata=-2.0e9)
+            with rasterio.open(output_filename, 'w', **profile) as destination:
+                destination.write(data, indexes=1)
 
 if __name__ == '__main__':
     main()

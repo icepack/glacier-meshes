@@ -1,33 +1,28 @@
-import numpy as np
-import netCDF4
 import geojson
-from icepack.grid import geotiff, GridData
+import rasterio
 
 def main():
-    with netCDF4.Dataset("BedMachineGreenland-2017-09-20.nc", 'r') as dem:
-        nx, ny = len(dem['x']), len(dem['y'])
-        xmin, ymax = dem.xmin, dem.ymax
-        dx = dem.spacing
-
-        mask = dem['mask'][::-1,:]
-        mask = np.logical_or(mask == 0, mask == 4)
-
-        bed = GridData((xmin, ymax - ny * dx), dx, dem['bed'][::-1,:],
-                       missing_data_value=-9999)
-        surface = GridData((xmin, ymax - ny * dx), dx, dem['surface'][::-1,:],
-                           mask=mask)
-
     with open("../regions/greenland.geojson", 'r') as geojson_file:
         regions = geojson.loads(geojson_file.read())
 
-    for region in regions['features']:
-        name = region['properties']['name'].lower()
-        box = region['geometry']['coordinates']
+    for field_name in ['surface', 'bed']:
+        ident = 'netcdf:BedMachineGreenland-2017-09-20.nc:' + field_name
+        field = rasterio.open(ident, 'r')
 
-        geotiff.write(name + '-bed.tif', bed.subset(box[0], box[1]),
-                      missing=-2e9, crs='epsg:3413')
-        geotiff.write(name + '-surface.tif', surface.subset(box[0], box[1]),
-                      missing=-2e9, crs='epsg:3413')
+        for region in regions['features']:
+            region_name = region['properties']['name'].lower()
+            output_filename = region_name + '-' + field_name + '.tif'
+            box = region['geometry']['coordinates']
+
+            window = rasterio.windows.from_bounds(
+                *box[0], *box[1], field.transform, field.height, field.width)
+            data = field.read(indexes=1, window=window, masked=True)
+            transform = rasterio.windows.transform(window, field.transform)
+            profile = field.profile.copy()
+            profile.update(height=window.height, width=window.width,
+                           transform=transform, driver='GTiff')
+            with rasterio.open(output_filename, 'w', **profile) as destination:
+                destination.write(data, indexes=1)
 
 if __name__ == "__main__":
     main()

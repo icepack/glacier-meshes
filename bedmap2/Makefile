@@ -2,9 +2,9 @@
 .PHONY: all clean
 
 REGIONS=amery amundsen filchner-ronne larsen ross
-all: $(REGIONS:=-h.tif) $(REGIONS:=-mask.tif)
+all: $(REGIONS:=-h.tif)
 
-%.tif: bedmap2_tiff
+$(REGIONS:=-h.tif): bedmap2_tiff
 	python3 partition.py
 
 bedmap2_tiff: bedmap2_tiff.zip
