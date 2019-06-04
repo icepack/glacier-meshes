@@ -8,6 +8,7 @@
   "features": [
     {
       "geometry": {
+        "type": "LineString",
         "coordinates": [
           [
             -2312985.742187505,
@@ -1217,8 +1218,7 @@
             -2027388.0859821867,
             1037931.6886910924
           ]
-        ],
-        "type": "LineString"
+        ]
       },
       "properties": {
         "id": null
